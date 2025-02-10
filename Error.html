@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        :root {
+            --alert-red: #FF3B30;
+            --alert-green: #4CD964;
+            --windows-gray: #2D2D30;
+            --windows-light-gray: #3C3C40;
+            --windows-text: #FFFFFF;
+            --windows-blue: #1E90FF;
+        }
+
+        body {
+            background-color: var(--windows-gray);
+            color: var(--windows-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            cursor: none;
+            transition: background-color 0.5s ease;
+        }
+
+        .windows-modal {
+            background-color: var(--windows-light-gray);
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .windows-button {
+            background-color: var(--windows-blue);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .windows-alert {
+            background-color: var(--alert-red);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--windows-gray);
+        }
+
+        .fullscreen-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 9999;
+        }
+
+        .marquee {
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--windows-light-gray);
+            padding: 10px 0;
+        }
+
+        .marquee span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <!-- Fullscreen Container -->
+    <div class="fullscreen">
+        <!-- Windows-style Security Alert -->
+        <div class="windows-modal">
+            <h5>Important Security Alert</h5>
+            <p>Your SSN has been detected on the dark web! Please take action immediately!</p>
+            <div class="windows-alert">
+                Urgent: We found a match to your Social Security Number on the dark web. While this information doesn't necessarily mean you are a victim of identity theft, you may be at risk.
+            </div>
+            <button class="windows-button" id="closeButton">Close</button>
+        </div>
+    </div>
+
+    <!-- Marquee Footer -->
+    <div class="marquee">
+        <span>Urgent: Your SSN has been detected on the dark web. Take immediate action to protect your identity!</span>
+    </div>
+
+    <!-- Fullscreen Modal -->
+    <div class="fullscreen-modal" id="fullscreenModal">
+        <h4>System Threat Detected!</h4>
+        <p>ERROR CODE: 0x0000DEAD - Immediate action required!</p>
+        <button class="windows-button" id="closeModalButton">Close</button>
+    </div>
+
+    <script>
+        // Prevent user from exiting or closing the modals
+        let counter = 0;
+
+        function showFullscreen() {
+            document.body.requestFullscreen();
+            document.getElementById('fullscreenModal').style.display = 'block';
+        }
+
+        // When the user clicks Close, trigger the fullscreen mode and show multiple modals
+        $('#closeButton').click(function() {
+            counter++;
+            if (counter < 5) {  // Show multiple popups
+                showPopup();
+            } else {
+                showFullscreen();  // When counter is greater or equal to 5, enter fullscreen mode
+            }
+        });
+
+        // Show popup (alert) multiple times
+        function showPopup() {
+            const popup = $("<div class='windows-modal' style='z-index:10000;'><h5>Important Security Alert</h5><p>Your SSN has been detected on the dark web! Please take action immediately!</p><div class='windows-alert'>Urgent: We found a match to your Social Security Number on the dark web. While this information doesn't necessarily mean you are a victim of identity theft, you may be at risk.</div><button class='windows-button'>Close</button></div>");
+            $("body").append(popup);
+
+            // Close button event inside the popup
+            popup.find("button").click(function() {
+                counter++;
+                popup.remove();  // Remove the popup after clicking close
+                if (counter < 5) {
+                    showPopup();  // Keep showing the popup until counter reaches 5
+                } else {
+                    showFullscreen();  // After 5 clicks, trigger fullscreen
+                }
+            });
+        }
+
+        // Close fullscreen modal
+        $('#closeModalButton').click(() => {
+            $('#fullscreenModal').fadeOut(500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Security Scan</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://example.com/apple-background.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+        #fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #simulation-content {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            background-color: rgba(29, 29, 31, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+            color: #ff3b30;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        #progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #ff3b30;
+            transition: width 0.5s;
+            background-image: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.15) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.15) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 40px 40px;
+            animation: progress-bar-stripes 1s linear infinite;
+        }
+        @keyframes progress-bar-stripes {
+            from { background-position: 40px 0; }
+            to { background-position: 0 0; }
+        }
+        #start-button {
+            background-color: #ff3b30;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #start-button:hover {
+            background-color: #d62f2f;
+        }
+        .apple-logo {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 20px;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .icon {
+            width: 40px;
+            height: 40px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div id="fullscreen">
+        <div id="simulation-content">
+            <img src="https://www.apple.com/ac/globalnav/7/en_US/images/be15095f-5a20-57d0-ad14-cf4c638e223a/globalnav_apple_image__b5er5ngrzxqq_large.svg" alt="Apple Logo" class="apple-logo">
+            <h1 id="tab-title"></h1>
+            <div class="icon-container">
+                <img src="https://cdn-icons-png.flaticon.com/512/1000/1000946.png" alt="Lock Icon" class="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/1000/1000949.png" alt="Shield Icon" class="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/1000/1000955.png" alt="Warning Icon" class="icon">
+            </div>
+            <p id="tab-content"></p>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <p id="progress-text">0%</p>
+            <button id="start-button">Start Security Scan</button>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 0;
+        let isSimulationRunning = false;
+        const tabs = [
+            { title: "System Scan", content: "Scanning system for vulnerabilities..." },
+            { title: "Network Analysis", content: "Analyzing network traffic..." },
+            { title: "Threat Detection", content: "Detecting potential security threats..." },
+            { title: "Data Protection", content: "Securing sensitive data..." }
+        ];
+
+        function switchTab() {
+            currentTab = (currentTab + 1) % tabs.length;
+            updateContent();
+        }
+
+        function updateContent() {
+            document.getElementById('tab-title').textContent = tabs[currentTab].title;
+            document.getElementById('tab-content').textContent = tabs[currentTab].content;
+        }
+
+        function simulateProgress() {
+            let progress = 0;
+            const progressBar = document.getElementById('progress-bar');
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 2;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    switchTab();
+                    simulateProgress();
+                }
+                progressBar.style.width = `${progress}%`;
+                document.getElementById('progress-text').textContent = `${Math.round(progress)}%`;
+            }, 100);
+        }
+
+        function requestFullScreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => console.error('Error attempting to enable fullscreen:', err));
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        }
+
+        function handleFullscreenChange() {
+            if (document.fullscreenElement || document.webkitFullscreenElement || 
+                document.mozFullScreenElement || document.msFullscreenElement) {
+                console.log('Entered fullscreen mode');
+                if (!isSimulationRunning) {
+                    isSimulationRunning = true;
+                    simulateProgress();
+                    setInterval(switchTab, 10000);
+                }
+            } else {
+                console.log('Exited fullscreen mode');
+                requestFullScreen(); // Attempt to re-enter fullscreen
+            }
+        }
+
+        function startSimulation() {
+            console.log('Starting simulation...');
+            document.getElementById('start-button').style.display = 'none';
+            requestFullScreen();
+        }
+
+        function initializeEventListeners() {
+            document.addEventListener("keydown", function(event) {
+                if (event.key === "Escape" || event.key === "F11" || (event.ctrlKey && event.key === "F4")) {
+                    event.preventDefault();
+                }
+            });
+
+            document.addEventListener("fullscreenchange", handleFullscreenChange);
+            document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+            document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+            document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+            document.getElementById('start-button').addEventListener('click', startSimulation);
+        }
+
+        window.onload = () => {
+            updateContent();
+            initializeEventListeners();
+            console.log('Page loaded and initialized');
+        };
+    </script>
+</body>
+</html>
